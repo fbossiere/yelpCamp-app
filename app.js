@@ -1,63 +1,46 @@
-var express = require('express');
-var app = express();
-var bodyParser = require('body-parser');
+var express = require('express'),
+bodyParser = require('body-parser'),
+mongoose = require("mongoose"),
+Campground = require("./models/campground"),
+Comment = require("./models/comment"),
+passport = require('passport'),
+cookieParser = require('cookie-parser'),
+LocalStrategy = require("passport-local").Strategy,
+passportLocalMongoose = require("passport-local-mongoose"),
+User = require("./models/user"),
+seedDB = require("./seeds");
 const path = require('path');
-var mongoose = require("mongoose");
 require('mongoose-type-url');
+
 
 mongoose.connect('mongodb://localhost/yelpcamp_app');
 
-var campgroundSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true
-    },
-    imageURL: {
-        type: mongoose.SchemaTypes.Url,
-        required: true
-    },
-    description: {
-        type: String,
-        required: false
-    }
-});
-
-var Campground = mongoose.model('Campground', campgroundSchema);
-// var campgrounds = [{
-//     name: 'Salmon Creek',
-//     image: 'http://www.yellowstonenationalparklodges.com/wp-content/gallery/bridge-bay-campground/bridge-bay-campground-1.jpg'
-// }, {
-//     name: 'Granite Hill',
-//     image: 'http://www.yellowstonenationalparklodges.com/wp-content/gallery/madison-campground/madison-campground-11.jpg'
-// }, {
-//     name: 'Corona Beach',
-//     image: 'https://s3-media4.fl.yelpcdn.com/bphoto/BMPQy9NO-FIb6g06GosNIA/348s.jpg'
-// }, {
-//     name: 'Granite Hill',
-//     image: 'http://www.yellowstonenationalparklodges.com/wp-content/gallery/madison-campground/madison-campground-11.jpg'
-// }, {
-//     name: 'Corona Beach',
-//     image: 'https://s3-media4.fl.yelpcdn.com/bphoto/BMPQy9NO-FIb6g06GosNIA/348s.jpg'
-// }, {
-//     name: 'Granite Hill',
-//     image: 'http://www.yellowstonenationalparklodges.com/wp-content/gallery/madison-campground/madison-campground-11.jpg'
-// }, {
-//     name: 'Corona Beach',
-//     image: 'https://s3-media4.fl.yelpcdn.com/bphoto/BMPQy9NO-FIb6g06GosNIA/348s.jpg'
-// }, {
-//     name: 'Granite Hill',
-//     image: 'http://www.yellowstonenationalparklodges.com/wp-content/gallery/madison-campground/madison-campground-11.jpg'
-// }, {
-//     name: 'Corona Beach',
-//     image: 'https://s3-media4.fl.yelpcdn.com/bphoto/BMPQy9NO-FIb6g06GosNIA/348s.jpg'
-// }];
-
+var app = express();
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')));
 app.set('view engine', 'ejs');
+app.use(cookieParser());
+app.use(require("express-session")({
+    secret: 'Rusty is the best and cutest dog in the world',
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(function(req, res, next){
+    res.locals.currentUser = req.user;
+    next();
+})
+
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+//SEEDING DB
+seedDB();
 
 app.get("/", function(req, res) {
     res.render("landing");
@@ -70,10 +53,10 @@ app.get("/campgrounds", function(req, res) {
             console.log(err);
         }
         else {
-            console.log('Found the following campground:');
-            console.log(campgrounds);
-            res.render("index", {
-                campgrounds: campgrounds
+            console.log('Found campgrounds');
+            res.render("campgrounds/index", {
+                campgrounds: campgrounds,
+                currentUser: req.user
             });
         }
     });
@@ -81,16 +64,11 @@ app.get("/campgrounds", function(req, res) {
 });
 
 app.get('/campgrounds/new', function(req, res) {
-    res.render('new');
+    res.render('campgrounds/new');
 });
 
 app.post("/campgrounds", function(req, res) {
-    var newCampground = {
-        name: req.body.newCampgroundName,
-        imageURL: req.body.newCampgroundImage,
-        description: req.body.newCampgroundDescription
-    };
-    Campground.create(newCampground, function(err, campground) {
+    Campground.create(req.body.campground, function(err, campground) {
         if (err) {
             console.log('Could not create the campground because of the following error:');
             console.log(err);
@@ -104,19 +82,93 @@ app.post("/campgrounds", function(req, res) {
 });
 
 app.get('/campgrounds/:id', function(req, res) {
-    Campground.findById(req.params.id, function(err, campground){
+    Campground.findById(req.params.id).populate('comments').exec(function(err, campground){
         if(err){
             console.log('Could not find campground with the following id:');
             console.log(req.params.id);
             console.log(err);
-        } else{
+        } else {
             console.log('Successfully found campground with the following id:');
             console.log(req.params.id);
             console.log(campground);
-            res.render("show", {campground: campground});
+            console.log(campground.comments);
+            res.render("campgrounds/show", {campground: campground});
         }
     })
 });
+
+app.get('/campgrounds/:id/comments/new', isLoggedIn, function(req, res) {
+    Campground.findById(req.params.id, function(err, campground){
+        if(err){
+            console.log('Could not find campground with id ' + req.params.id);
+        } else{
+            console.log('Successfully found campground with id ' + req.params.id);
+            res.render('comments/new', {campground: campground});
+        }
+    });
+});
+
+app.post('/campgrounds/:id/comments', isLoggedIn, function(req, res) {
+    Campground.findById(req.params.id, function(err, campground){
+        if(err){
+            console.log('Could not find campground with id ' + req.params.id);
+            res.redirect('/campgrounds');
+        } else{
+            console.log('Successfully found campground with id ' + campground._id);
+            Comment.create(req.body.comment, function(err, comment){
+                if(err){
+                    console.log('Could not create the following comment:');
+                    console.log(req.body.comment);
+                } else {
+                    campground.comments.push(comment);
+                    campground.save();
+                    res.redirect('/campgrounds/' + campground._id)
+                    console.log('Successfully created and added comment to campground');
+                }
+            })
+        }
+    });
+});
+
+app.get('/register', function(req, res){
+    res.render('authentication/register');
+});
+
+app.post('/register', function(req, res){
+    var newUser = new User({username: req.body.username});
+    User.register(newUser, req.body.password, function(err, user){
+        if(err){
+            console.log(err);
+            res.redirect('/register');
+        } else {
+            passport.authenticate('local')(req, res, function(){
+                res.redirect('/campgrounds');
+            });
+        }
+    });
+});
+
+app.get('/login', function(req, res){
+    res.render('authentication/login');
+});
+
+app.post('/login', passport.authenticate('local', {
+    successRedirect: '/campgrounds',
+    failureRedirect: '/login'
+}), function(req, res){});
+
+app.get('/logout', function(req, res){
+    req.logOut();
+    res.redirect('/');
+});
+
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    } else {
+        res.redirect('/login');
+    }
+}
 
 app.listen(process.env.PORT, process.env.IP, function() {
     console.log("server is listening!")
