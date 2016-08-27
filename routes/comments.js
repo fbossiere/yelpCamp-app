@@ -34,9 +34,9 @@ router.post('/', middlewareObj.isLoggedIn, function(req, res) {
                         username: req.user.username
                     };
                     comment.save();
-                    console.log(comment);
                     campground.comments.push(comment);
                     campground.save();
+                    req.flash("success", "Comment successfully added.");
                     res.redirect('/campgrounds/' + campground._id)
                     console.log('Successfully created and added comment to campground');
                 }

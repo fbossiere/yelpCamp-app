@@ -5,10 +5,10 @@ const   express                 = require('express'),
         methodOverride          = require("method-override"),
         cookieParser            = require('cookie-parser'),
         LocalStrategy           = require("passport-local").Strategy,
-        passportLocalMongoose   = require("passport-local-mongoose"),
         User                    = require("./models/user"),
         seedDB                  = require("./seeds"),
-        path                    = require('path');
+        path                    = require('path'),
+        flash                   = require('connect-flash');
 
 const commentRoutes             = require("./routes/comments"),
       campgroundRoutes          = require("./routes/campgrounds"),
@@ -31,10 +31,15 @@ app.use(require("express-session")({
     resave: false,
     saveUninitialized: false
 }));
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(function(req, res, next){
     res.locals.currentUser = req.user;
+    res.locals.alert = {
+        errors: req.flash("error"),
+        successes: req.flash("success")
+    };
     next();
 });
 app.use('/', authRoutes);

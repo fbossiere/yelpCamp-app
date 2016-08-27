@@ -12,7 +12,7 @@ router.get("/", function(req, res) {
             console.log(err);
         }
         else {
-            console.log('Found campgrounds');
+            console.log('Successfully found campgrounds');
             res.render("campgrounds/index", {
                 campgrounds: campgrounds,
                 currentUser: req.user
@@ -38,8 +38,8 @@ router.post("/", middlewareObj.isLoggedIn, function(req, res) {
                 username: req.user.username
             }
             campground.save();
-            console.log('Successfully created the following campground:');
-            console.log(campground);
+            console.log('Successfully created campground:');
+            req.flash("success", "Campground successfully created.");
             res.redirect('/campgrounds');
         }
     });
@@ -54,8 +54,6 @@ router.get('/:id', function(req, res) {
         } else {
             console.log('Successfully found campground with the following id:');
             console.log(req.params.id);
-            console.log(campground);
-            console.log(campground.comments);
             res.render("campgrounds/show", {campground: campground});
         }
     })
@@ -81,6 +79,7 @@ router.put('/:id', middlewareObj.isCampgroundAuthor, function(req, res){
             res.render('campgrounds/edit');
         } else{
             console.log('Successfully edited campground.');
+            req.flash("success", "Campground successfully edited.");
             res.redirect('/campgrounds/' + req.params.id);
         }
     });
@@ -93,6 +92,7 @@ router.delete('/:id', middlewareObj.isCampgroundAuthor, function(req, res){
             res.redirect('/campgrounds/' + req.params.id);
         } else{
             console.log('Successfully deleted campground.');
+            req.flash("success", "Campground successfully deleted.");
             res.redirect('/campgrounds/');
         }
     });
