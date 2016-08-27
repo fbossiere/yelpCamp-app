@@ -51,7 +51,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 //SEEDING DB
-seedDB();
+// seedDB();
 
 
 app.listen(process.env.PORT, process.env.IP, function() {
