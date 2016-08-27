@@ -1,11 +1,12 @@
-const   express     = require("express"),
-        Campground  = require("../models/campground"),
-        Comment     = require("../models/comment");
+const   express         = require("express"),
+        Campground      = require("../models/campground"),
+        Comment         = require("../models/comment"),
+        middlewareObj   = require("../middleware");
 
 const router  = express.Router({mergeParams: true});
 
 
-router.get('/new', isLoggedIn, function(req, res) {
+router.get('/new', middlewareObj.isLoggedIn, function(req, res) {
     Campground.findById(req.params.id, function(err, campground){
         if(err){
             console.log('Could not find campground with id ' + req.params.id);
@@ -16,7 +17,7 @@ router.get('/new', isLoggedIn, function(req, res) {
     });
 });
 
-router.post('/', isLoggedIn, function(req, res) {
+router.post('/', middlewareObj.isLoggedIn, function(req, res) {
     Campground.findById(req.params.id, function(err, campground){
         if(err){
             console.log('Could not find campground with id ' + req.params.id);
@@ -28,6 +29,12 @@ router.post('/', isLoggedIn, function(req, res) {
                     console.log('Could not create the following comment:');
                     console.log(req.body.comment);
                 } else {
+                    comment.author = {
+                        id: req.user._id,
+                        username: req.user.username
+                    };
+                    comment.save();
+                    console.log(comment);
                     campground.comments.push(comment);
                     campground.save();
                     res.redirect('/campgrounds/' + campground._id)
@@ -37,14 +44,6 @@ router.post('/', isLoggedIn, function(req, res) {
         }
     });
 });
-
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
-    } else {
-        res.redirect('/login');
-    }
-};
 
 
 module.exports = router;

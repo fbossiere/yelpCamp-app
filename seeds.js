@@ -32,18 +32,19 @@ function seedDB(){
                     } else {
                         console.log('The following campground has been correctly added:');
                         console.log(campground);
-                        Comment.create({
-                            text: 'This place is greate but I wish there was internet.',
-                            author: 'Homer'
-                        }, function(err, comment){
-                            if(err){
-                                console.log('Could not create comment.');
-                            } else {
-                                campground.comments.push(comment);
-                                campground.save();
-                                console.log('Created new comment and associated it to campground.');
-                            }
-                        });
+                        campground.comments = [];
+                        // Comment.create({
+                        //     text: 'This place is greate but I wish there was internet.',
+                        //     author: 'Homer'
+                        // }, function(err, comment){
+                        //     if(err){
+                        //         console.log('Could not create comment.');
+                        //     } else {
+                        //         campground.comments.push(comment);
+                        //         campground.save();
+                        //         console.log('Created new comment and associated it to campground.');
+                        //     }
+                        // });
                     }
                 });
             });

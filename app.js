@@ -2,6 +2,7 @@ const   express                 = require('express'),
         bodyParser              = require('body-parser'),
         mongoose                = require("mongoose"),
         passport                = require('passport'),
+        methodOverride          = require("method-override"),
         cookieParser            = require('cookie-parser'),
         LocalStrategy           = require("passport-local").Strategy,
         passportLocalMongoose   = require("passport-local-mongoose"),
@@ -21,6 +22,7 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(methodOverride('_method'));
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')));
 app.set('view engine', 'ejs');
 app.use(cookieParser());
