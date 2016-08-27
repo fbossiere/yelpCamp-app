@@ -15,7 +15,8 @@ const commentRoutes             = require("./routes/comments"),
       authRoutes                = require("./routes/index");
 
 
-mongoose.connect('mongodb://xenlee:xenleexenlee@ds017726.mlab.com:17726/yelpcamp_app');
+var dbURL = process.env.DATABASEURL || 'mongodb://localhost/yelpcamp_app'
+mongoose.connect(dbURL);
 
 const app = express();
 app.use(bodyParser.urlencoded({
@@ -51,7 +52,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 //SEEDING DB
-// seedDB();
+seedDB();
 
 
 app.listen(process.env.PORT, process.env.IP, function() {
