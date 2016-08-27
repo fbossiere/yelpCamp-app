@@ -52,8 +52,9 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 //SEEDING DB
-seedDB();
-
+if(dbURL === 'mongodb://localhost/yelpcamp_app'){
+    seedDB();
+}
 
 app.listen(process.env.PORT, process.env.IP, function() {
     console.log("server is listening!")
