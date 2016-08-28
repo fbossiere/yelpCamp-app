@@ -1,28 +1,28 @@
 <% include ../partials/header %>
 
-<div class='container'>
-    <h1 class='text-center'>Create a new Campground</h1>
-    <div class='row new-campground-form'>
-        <form action='/campgrounds' method='POST' class='well'>
-            <div class="form-group">
-                <label>Name</label>
-                <input class="form-control" type="text" placeholder='Enter a Name' name="campground[name]">
-            </div>
-            <div class="form-group">
-                <label>Image URL</label>
-                <input class="form-control" type="text" placeholder='Enter an image URL' name="campground[imageURL]">
-            </div>
-            <div class="form-group">
-                <label>Description</label>
-                <textarea class="form-control" rows="5" placeholder='Enter a Description' name="campground[description]"></textarea>
-            </div>
-            <div class="form-group">
-                <button class='btn btn-success'>
+    <div class='container'>
+        <h1 class='text-center'>Create a new Campground</h1>
+        <div class='row new-campground-form'>
+            <form action='/campgrounds' method='POST' class='well'>
+                <div class="form-group">
+                    <label>Name</label>
+                    <input class="form-control" type="text" placeholder='Enter a Name' name="campground[name]">
+                </div>
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input class="form-control" type="text" placeholder='Enter an image URL' name="campground[imageURL]">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea class="form-control" rows="5" placeholder='Enter a Description' name="campground[description]"></textarea>
+                </div>
+                <div class="form-group">
+                    <button class='btn btn-success'>
                     <i class="fa fa-plus-circle" aria-hidden="true"></i> Add Campground
                 </button>
-                <a class='btn btn-warning' href='/campgrounds'>Cancel</a>
-            </div>
-        </form>
-    </div>
-    
-<% include ../partials/footer %>
+                    <a class='btn btn-warning' href='/campgrounds'>Cancel</a>
+                </div>
+            </form>
+        </div>
+
+        <% include ../partials/footer %>

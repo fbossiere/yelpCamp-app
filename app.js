@@ -1,21 +1,21 @@
-const   express                 = require('express'),
-        bodyParser              = require('body-parser'),
-        mongoose                = require("mongoose"),
-        passport                = require('passport'),
-        methodOverride          = require("method-override"),
-        cookieParser            = require('cookie-parser'),
-        LocalStrategy           = require("passport-local").Strategy,
-        User                    = require("./models/user"),
-        seedDB                  = require("./seeds"),
-        path                    = require('path'),
-        flash                   = require('connect-flash');
+const express = require('express'),
+    bodyParser = require('body-parser'),
+    mongoose = require("mongoose"),
+    passport = require('passport'),
+    methodOverride = require("method-override"),
+    cookieParser = require('cookie-parser'),
+    LocalStrategy = require("passport-local").Strategy,
+    User = require("./models/user"),
+    seedDB = require("./seeds"),
+    path = require('path'),
+    flash = require('connect-flash');
 
-const commentRoutes             = require("./routes/comments"),
-      campgroundRoutes          = require("./routes/campgrounds"),
-      authRoutes                = require("./routes/index");
+const commentRoutes = require("./routes/comments"),
+    campgroundRoutes = require("./routes/campgrounds"),
+    authRoutes = require("./routes/index");
 
-
-var dbURL = process.env.DATABASEURL || 'mongodb://localhost/yelpcamp_app'
+var testDbURL = 'mongodb://xenlee:xenleexenlee@ds017736.mlab.com:17736/yelpcamp_app_test';
+var dbURL = process.env.DATABASEURL || testDbURL;
 mongoose.connect(dbURL);
 
 const app = express();
@@ -35,7 +35,7 @@ app.use(require("express-session")({
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(function(req, res, next){
+app.use(function(req, res, next) {
     res.locals.currentUser = req.user;
     res.locals.alert = {
         errors: req.flash("error"),
@@ -52,10 +52,10 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 //SEEDING DB
-if(dbURL === 'mongodb://localhost/yelpcamp_app'){
+if (dbURL === testDbURL) {
     seedDB();
 }
 
-app.listen(process.env.PORT, process.env.IP, function() {
+app.listen(3000, function() {
     console.log("server is listening!")
 });
