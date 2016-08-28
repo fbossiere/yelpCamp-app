@@ -1,25 +1,27 @@
-<% include ../partials/header %>
-    <div class='container'>
-        <header class='jumbotron'>
-            <h1><i class="fa fa-tree fa-1x" aria-hidden="true"></i> Welcome to YelpCamp!</h1>
-            <p>View our hand-picked campgrounds from all over the world</p>
-            <p><a class='btn btn-success' href='/campgrounds/new'><i class="fa fa-plus-circle" aria-hidden="true"></i> Add New Campground</a></p>
-        </header>
+<% include ../partials/header.ejs %>
+<div class='container'>
+    <header class='jumbotron'>
+        <h1><i class="fa fa-tree fa-1x" aria-hidden="true"></i> Welcome to YelpCamp!</h1>
+        <p>View our hand-picked campgrounds from all over the world</p>
+        <p><a class='btn btn-success' href='/campgrounds/new'><i class="fa fa-plus-circle" aria-hidden="true"></i> Add
+                New Campground</a></p>
+    </header>
 
-        <h3>Our Most Popular Sites</h3>
-        <div class='row campgrounds text-center'>
-            <% campgrounds.forEach(function(campground){ %>
-                <div class='campground col-md-3 col-sm-6'>
+    <h3>Our Most Popular Sites</h3>
+    <div class='row campgrounds text-center'>
+        <% campgrounds.forEach(function(campground){ %>
+        <div class='campground col-md-3 col-sm-6'>
 
-                    <div class='thumbnail'>
-                        <img src="<%= campground.imageURL %>">
-                        <div class='caption'>
-                            <h4><%= campground.name %></h4>
-                            <p><a class='btn btn-primary' href='/campgrounds/<%= campground._id %>'>More Info</a></p>
-                        </div>
-                    </div>
+            <div class='thumbnail'>
+                <img src="<%= campground.imageURL %>">
+                <div class='caption'>
+                    <h4><%= campground.name %></h4>
+                    <p><a class='btn btn-primary' href='/campgrounds/<%= campground._id %>'>More Info</a></p>
                 </div>
-                <% }); %>
+            </div>
         </div>
+        <% }); %>
+    </div>
+</div>
 
-        <% include ../partials/footer %>
+<% include ../partials/footer.ejs %>

@@ -1,28 +1,32 @@
-<% include ../partials/header %>
+<% include ../partials/header.ejs %>
 
-    <div class='container'>
-        <h1 class='text-center'>Edit Campground</h1>
-        <div class='row new-campground-form'>
-            <form action='/campgrounds/<%= campground._id %>?_method=PUT' method='POST' class='well'>
-                <div class="form-group">
-                    <label>Name</label>
-                    <input class="form-control" type="text" placeholder='Enter a Name' name="campground[name]" value=<%=c ampground.name %>>
-                </div>
-                <div class="form-group">
-                    <label>Image URL</label>
-                    <input class="form-control" type="text" placeholder='Enter an image URL' name="campground[imageURL]" value=<%=c ampground.imageURL %>>
-                </div>
-                <div class="form-group">
-                    <label>Description</label>
-                    <textarea class="form-control" rows="5" placeholder='Enter a Description' name="campground[description]"><%= campground.description %></textarea>
-                </div>
-                <div class="form-group">
-                    <button class='btn btn-success'>
+<div class='container'>
+    <h1 class='text-center'>Edit Campground</h1>
+    <div class='row new-campground-form'>
+        <form action='/campgrounds/<%= campground._id %>?_method=PUT' method='POST' class='well'>
+            <div class="form-group">
+                <label>Name</label>
+                <input class="form-control" type="text" placeholder='Enter a Name' name="campground[name]"
+                       value=<%= campground.name %>>
+            </div>
+            <div class="form-group">
+                <label>Image URL</label>
+                <input class="form-control" type="text" placeholder='Enter an image URL' name="campground[imageURL]"
+                       value=<%= campground.imageURL %>>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea class="form-control" rows="5" placeholder='Enter a Description'
+                          name="campground[description]"><%= campground.description %></textarea>
+            </div>
+            <div class="form-group">
+                <button class='btn btn-success'>
                     <i class="fa fa-plus-circle" aria-hidden="true"></i> Edit Campground
                 </button>
-                    <a class='btn btn-warning' href='/campgrounds'>Cancel</a>
-                </div>
-            </form>
-        </div>
+                <a class='btn btn-warning' href='/campgrounds'>Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
 
-<% include ../partials/footer %>
+<% include ../partials/footer.ejs %>

@@ -8,8 +8,8 @@ const router = express.Router({
 });
 
 
-router.get('/new', middlewareObj.isLoggedIn, function(req, res) {
-    Campground.findById(req.params.id, function(err, campground) {
+router.get('/new', middlewareObj.isLoggedIn, function (req, res) {
+    Campground.findById(req.params.id, function (err, campground) {
         if (err) {
             console.log('Could not find campground with id ' + req.params.id);
         } else {
@@ -21,14 +21,14 @@ router.get('/new', middlewareObj.isLoggedIn, function(req, res) {
     });
 });
 
-router.post('/', middlewareObj.isLoggedIn, function(req, res) {
-    Campground.findById(req.params.id, function(err, campground) {
+router.post('/', middlewareObj.isLoggedIn, function (req, res) {
+    Campground.findById(req.params.id, function (err, campground) {
         if (err) {
             console.log('Could not find campground with id ' + req.params.id);
             res.redirect('/campgrounds');
         } else {
             console.log('Successfully found campground with id ' + campground._id);
-            Comment.create(req.body.comment, function(err, comment) {
+            Comment.create(req.body.comment, function (err, comment) {
                 if (err) {
                     console.log('Could not create the following comment:');
                     console.log(req.body.comment);
@@ -41,7 +41,7 @@ router.post('/', middlewareObj.isLoggedIn, function(req, res) {
                     campground.comments.push(comment);
                     campground.save();
                     req.flash("success", "Comment successfully added.");
-                    res.redirect('/campgrounds/' + campground._id)
+                    res.redirect('/campgrounds/' + campground._id);
                     console.log('Successfully created and added comment to campground');
                 }
             })

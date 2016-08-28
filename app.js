@@ -35,7 +35,7 @@ app.use(require("express-session")({
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.locals.currentUser = req.user;
     res.locals.alert = {
         errors: req.flash("error"),
@@ -54,11 +54,11 @@ passport.deserializeUser(User.deserializeUser());
 if (dbURL === testDbURL) {
     //SEEDING DB
     seedDB();
-    app.listen(3000, function() {
+    app.listen(3000, function () {
         console.log("server is listening!")
     });
 } else {
-    app.listen(process.env.PORT, function() {
+    app.listen(process.env.PORT, function () {
         console.log("server is listening!")
     });
 }
