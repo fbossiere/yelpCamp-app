@@ -58,7 +58,7 @@ if (dbURL === testDbURL) {
         console.log("server is listening!")
     });
 } else {
-    app.listen(function() {
+    app.listen(process.env.PORT, function() {
         console.log("server is listening!")
     });
 }
