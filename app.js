@@ -51,11 +51,14 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-//SEEDING DB
 if (dbURL === testDbURL) {
+    //SEEDING DB
     seedDB();
+    app.listen(3000, function() {
+        console.log("server is listening!")
+    });
+} else {
+    app.listen(function() {
+        console.log("server is listening!")
+    });
 }
-
-app.listen(3000, function() {
-    console.log("server is listening!")
-});
